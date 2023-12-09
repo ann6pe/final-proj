@@ -17,6 +17,7 @@ avgEpisodeNumber = []
 avgEpisodeScore = []
 max_time = 120  
 death_penalty = 50
+
 # plot current policy vs trend
 # Updated plot function to accept two sets of episode numbers and scores
 def plotTrend(episode):
@@ -36,7 +37,7 @@ def plotTrend(episode):
 
     plt.legend()
     plt.grid(True)
-    plt.savefig(f'./trends/death_pen2_e{episode}.png')
+    plt.savefig(f'./trends/2000learn_e{episode}.png')
 
 def plotAvg(episode):
     plt.figure(figsize=(10, 5))
@@ -55,7 +56,7 @@ def plotAvg(episode):
 
     plt.legend()
     plt.grid(True)
-    plt.savefig(f'./avgTrends/death_pen2_e{episode}.png')
+    plt.savefig(f'./avgTrends/2000learn_e{episode}.png')
 
 def plotLearnedTrend(episode):
     plt.figure(figsize=(10, 5))
@@ -74,10 +75,10 @@ def plotLearnedTrend(episode):
 
     plt.legend()
     plt.grid(True) 
-    plt.savefig(f'./learned/death_pen2_e{episode}.png')
+    plt.savefig(f'./learned/2000learn_e{episode}.png')
 agent = DQNAgent(state_size, action_size)
-
-num_episodes = 500
+agent.model.load_weights('./weights.h5')
+num_episodes = 1500
 max_steps_per_episode = 10000
 batch_size = 32
 is_rendering = False
@@ -117,42 +118,46 @@ for e in range(num_episodes):
     print(f"Episode: {e+1}/{num_episodes}, Score: {total_reward}, terminated: {done}")
 
     if e != 0 and ((e+1) == 10 or (e+1)%50 == 0):
-        env = gym.make('SpaceInvaders-v0', render_mode = "rgb_array")
-        videoFolder =  f'./death_pen2/episode_{e+1}'
-        env = RecordVideo(env, f'./video/{videoFolder}', episode_trigger = lambda e: e % 5 == 0)
-        is_rendering = True
-        state = env.reset()
-        screen_data = state[0]  # This is the screen data
-        state_size = screen_data.shape
-        state = np.reshape(screen_data, [1, state_size[0], state_size[1], state_size[2]])
-        total_reward = 0
-        done = False
-        start_time = time.time()
-        while not done:
-            action = agent.act(state, use_epsilon=False)
-            results = env.step(action)
-            next_state, reward, done, info = results[:4]
-            next_state = np.reshape(next_state, [1, state_size[0], state_size[1], state_size[2]])
+        for i in range(5):     
+            env = gym.make('SpaceInvaders-v0', render_mode = "rgb_array")
+            videoFolder =  f'./2000learn/episode_{e+1}_{i}'
+            env = RecordVideo(env, f'./video/{videoFolder}', episode_trigger = lambda e: True)
+            is_rendering = True
+            state = env.reset()
+            screen_data = state[0]  # This is the screen data
+            state_size = screen_data.shape
+            state = np.reshape(screen_data, [1, state_size[0], state_size[1], state_size[2]])
+            total_reward = 0
+            done = False
+            start_time = time.time()
+            while not done:
+                action = agent.act(state, use_epsilon=False)
+                results = env.step(action)
+                next_state, reward, done, info = results[:4]
+                next_state = np.reshape(next_state, [1, state_size[0], state_size[1], state_size[2]])
 
-            state = next_state
-            if done: 
-                reward -= death_penalty 
-            total_reward += reward
-            if done or time.time() - start_time > max_time:
-                break  
-        print(f"Current Policy for episode: {e+1}/{num_episodes}, Score: {total_reward}, terminated: {done}")
+                state = next_state
+                if done: 
+                    reward -= death_penalty 
+                total_reward += reward
+                if done or time.time() - start_time > max_time:
+                    break  
+            print(f"Current Policy for episode: {e+1}/{num_episodes}, Score: {total_reward}, terminated: {done}")
 
-        env.close()
-        episode_numbers_policy.append(e+1)
-        scores_policy.append(total_reward)
-        plotTrend(e+1)
+            env.close()
+            if(i == 0):
+                episode_numbers_policy.append(e+1)
+                scores_policy.append(total_reward/5)
+            else:
+                scores_policy[len(scores_policy)-1] += total_reward/5
+            plotTrend(e+1)
         if(len(episode_numbers_policy) >= 2):
             plotLearnedTrend(e+1)
         is_rendering = False
     # Train the agent with experiences in replay memory
     if len(agent.memory) > batch_size and is_rendering == False:
         agent.replay(batch_size)
-agent.model.save_weights('./weights.h5')
+agent.model.save_weights('./weights2000.h5')
 
 
 
