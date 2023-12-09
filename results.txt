@@ -1,0 +1,172 @@
+INITIAL slow learning
+class DQNAgent:
+    def __init__(self, state_size, action_size):
+        self.state_size = state_size
+        self.action_size = action_size
+        self.memory = deque(maxlen=2000)  # Change size as needed
+        self.gamma = 0.95  # Discount factor
+        self.epsilon = 1.0  # Exploration rate
+        self.epsilon_min = 0.01
+        self.epsilon_decay = 0.995
+        self.learning_rate = 0.001
+        self.model = self._build_model()
+
+    def _build_model(self):
+        """Builds a Deep Q-Network."""
+        model = Sequential()
+        model.add(Conv2D(32, (8, 8), strides=(4, 4), activation='relu', input_shape=self.state_size))
+        model.add(Conv2D(64, (4, 4), strides=(2, 2), activation='relu'))
+        model.add(Conv2D(64, (3, 3), activation='relu'))
+        model.add(Flatten())
+        model.add(Dense(512, activation='relu'))
+        model.add(Dense(self.action_size, activation='linear'))
+        model.compile(loss='mse', optimizer=legacy.Adam(learning_rate=self.learning_rate))
+        return model
+_________
+DP: result, got stuck
+dealth penalty: -100 to score
+class DQNAgent:
+    def __init__(self, state_size, action_size):
+        self.state_size = state_size
+        self.action_size = action_size
+        self.memory = deque(maxlen=2000)  # Change size as needed
+        self.gamma = 0.95  # Discount factor
+        self.epsilon = 1.0  # Exploration rate
+        self.epsilon_min = 0.01
+        self.epsilon_decay = 0.95
+        self.learning_rate = 0.1
+        self.model = self._build_model()
+
+    def _build_model(self):
+        """Builds a Deep Q-Network."""
+        model = Sequential()
+        model.add(Conv2D(32, (8, 8), strides=(4, 4), activation='relu', input_shape=self.state_size))
+        model.add(Conv2D(64, (4, 4), strides=(2, 2), activation='relu'))
+        model.add(Conv2D(64, (3, 3), activation='relu'))
+        model.add(Flatten())
+        model.add(Dense(512, activation='relu'))
+        model.add(Dense(self.action_size, activation='linear'))
+        model.compile(loss='mse', optimizer=legacy.Adam(learning_rate=self.learning_rate))
+        return model
+
+limitations: not my space invader so it was hard to manipulate actual environment. For instance, I wanted the reward to be higher for each kill. and -1000 if the death was due to the aliens getting to the bottom of the screen
+
+DP
+dealth penalty: -100 to score
+class DQNAgent:
+    def __init__(self, state_size, action_size):
+        self.state_size = state_size
+        self.action_size = action_size
+        self.memory = deque(maxlen=2000)  # Change size as needed
+        self.gamma = 0.95  # Discount factor
+        self.epsilon = 1.0  # Exploration rate
+        self.epsilon_min = 0.01
+        self.epsilon_decay = 0.995
+        self.learning_rate = 0.001
+        self.model = self._build_model()
+
+    def _build_model(self):
+        """Builds a Deep Q-Network."""
+        model = Sequential()
+        model.add(Conv2D(32, (8, 8), strides=(4, 4), activation='relu', input_shape=self.state_size))
+        model.add(Conv2D(64, (4, 4), strides=(2, 2), activation='relu'))
+        model.add(Conv2D(64, (3, 3), activation='relu'))
+        model.add(Flatten())
+        model.add(Dense(512, activation='relu'))
+        model.add(Dense(self.action_size, activation='linear'))
+        model.compile(loss='mse', optimizer=legacy.Adam(learning_rate=self.learning_rate))
+        return model
+
+DP2_1
+dealth penalty: -100 to score
+class DQNAgent:
+    def __init__(self, state_size, action_size):
+        self.state_size = state_size
+        self.action_size = action_size
+        self.memory = deque(maxlen=100000)  # Change size as needed
+        self.gamma = 0.9  # Discount factor
+        self.epsilon = 1.0  # Exploration rate
+        self.epsilon_min = 0.01
+        self.epsilon_decay = 0.995
+        self.learning_rate = 0.001
+        self.model = self._build_model()
+
+    def _build_model(self):
+        """Builds a Deep Q-Network."""
+        model = Sequential()
+        model.add(Conv2D(32, (8, 8), strides=(4, 4), activation='relu', input_shape=self.state_size))
+        model.add(Conv2D(64, (4, 4), strides=(2, 2), activation='relu'))
+        model.add(Conv2D(64, (3, 3), activation='relu'))
+        model.add(Flatten())
+        model.add(Dense(512, activation='relu'))
+        model.add(Dense(self.action_size, activation='linear'))
+        model.compile(loss='mse', optimizer=legacy.Adam(learning_rate=self.learning_rate))
+        return model
+
+DP2_2
+num_episodes = 50
+max_steps_per_episode = 50000
+batch_size = 64
+reward for not terminating: 500
+class DQNAgent:
+    def __init__(self, state_size, action_size):
+        self.state_size = state_size
+        self.action_size = action_size
+        self.memory = deque(maxlen=100000)  # Change size as needed
+        self.gamma = 0.9  # Discount factor
+        self.epsilon = 1.0  # Exploration rate
+        self.epsilon_min = 0.01
+        self.epsilon_decay = 0.995
+        self.learning_rate = 0.001
+        self.model = self._build_model()
+
+    def _build_model(self):
+        """Builds a Deep Q-Network."""
+        model = Sequential()
+
+
+        model.add(Conv2D(32, (8, 8), strides=(4, 4), input_shape=self.state_size,
+                         kernel_initializer=HeNormal(), activation='elu'))
+        model.add(Conv2D(64, (4, 4), strides=(2, 2), kernel_initializer=HeNormal(), activation='elu'))
+        model.add(Conv2D(64, (3, 3), kernel_initializer=HeNormal(), activation='elu'))
+        
+        model.add(Flatten())
+        model.add(Dense(512, activation='elu', kernel_initializer=HeNormal()))
+        model.add(Dense(self.action_size, activation='linear', kernel_initializer=HeNormal()))
+
+        model.compile(loss='mse', optimizer=Adam(learning_rate=self.learning_rate))
+        return model
+
+iter3 DP
+dp: 50
+num_episodes: 500
+batch_size: 50
+class DQNAgent:
+    def __init__(self, state_size, action_size):
+        self.state_size = state_size
+        self.action_size = action_size
+        self.memory = deque(maxlen=100000)  # Change size as needed
+        self.gamma = 0.9  # Discount factor
+        self.epsilon = 1.0  # Exploration rate
+        self.epsilon_min = 0.01
+        self.epsilon_decay = 0.995
+        self.learning_rate = 0.001
+        self.model = self._build_model()
+
+    def _build_model(self):
+        """Builds a Deep Q-Network."""
+        model = Sequential()
+
+
+        model.add(Conv2D(32, (8, 8), strides=(4, 4), input_shape=self.state_size,
+                         kernel_initializer=HeNormal(), activation='elu'))
+        model.add(Conv2D(64, (4, 4), strides=(2, 2), kernel_initializer=HeNormal(), activation='elu'))
+        model.add(Conv2D(64, (3, 3), kernel_initializer=HeNormal(), activation='elu'))
+        
+        model.add(Flatten())
+        model.add(Dense(512, activation='elu', kernel_initializer=HeNormal()))
+        model.add(Dense(self.action_size, activation='linear', kernel_initializer=HeNormal()))
+        model.add(Dense(256, activation='elu', kernel_initializer=HeNormal()))  # New layer
+        model.add(Dense(self.action_size, activation='linear', kernel_initializer=HeNormal()))
+        model.compile(loss='mse', optimizer=Adam(learning_rate=self.learning_rate))
+        return model
